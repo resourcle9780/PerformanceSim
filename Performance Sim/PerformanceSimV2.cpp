@@ -84,7 +84,6 @@ vector<Data> runSim(const Vehicle& car) {
     const double idleRPM = 1000.0;
     constexpr double meterToMph = 2.23694;
     constexpr double shiftDuration = 0.20;
-    constexpr double topSpeedTolerance = 0.05;
     constexpr double drivetrainEfficiency = 0.90;
     constexpr double maxTime = 180.0;
 
@@ -159,7 +158,7 @@ vector<Data> runSim(const Vehicle& car) {
             topSpeed = true;
             break;
         }
-        if (currentGear == numGears && std::abs(acceleration) < topSpeedTolerance && !currentlyShifting) {
+        if (currentGear == numGears && acceleration < 0.05  && !currentlyShifting) {
             cout << "Top speed reached at: " << (carVel * meterToMph) << " mph at " << fixed << setprecision(3) << time << " seconds" << endl;
             topSpeed = true;
             break;
