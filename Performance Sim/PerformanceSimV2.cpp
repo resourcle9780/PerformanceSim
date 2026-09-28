@@ -61,7 +61,7 @@ double getEngineTorque(double rpm, double peakTorque, double redlineRPM) {
     }
     return 0.0;
 }
-struct DataPoint {
+struct Data {
     double time;
     double speed;
     double accel;
@@ -69,8 +69,8 @@ struct DataPoint {
     double engineRPM;
     double distanceMeters;
 };
-vector<DataPoint> runSim(const Vehicle& car) {
-    vector<DataPoint> data;
+vector<Data> runSim(const Vehicle& car) {
+    vector<Data> data;
     
     constexpr double airDensity = 1.225;
     constexpr double g = 9.81;
@@ -99,7 +99,6 @@ vector<DataPoint> runSim(const Vehicle& car) {
     bool topSpeed = false;
     int currentGear = 1;
     double shiftTimer = 0.0;
-    double fifthGearTime = 0.0;
     
     while (time < maxTime) {
         double wheelAngularVel = carVel / car.radius;
@@ -132,12 +131,6 @@ vector<DataPoint> runSim(const Vehicle& car) {
             double rawTraction = (getEngineTorque(engineRPM, car.peakTorque, car.redlineRPM) * currentTotalRatio * drivetrainEfficiency) / car.radius;
             F_traction = min(rawTraction, maxGrip);
         }
-
-        if (currentGear == numGears && !currentlyShifting) fifthGearTime += timeStep;
-        else fifthGearTime = 0.0;
-
-
-
 
         double F_net = F_traction - F_drag - F_roll;
         acceleration = F_net / car.mass;
@@ -181,38 +174,25 @@ vector<DataPoint> runSim(const Vehicle& car) {
     }
     return data;
 }
-void exportCSV(const string& fileName, const vector<DataPoint>& data) {
+void CSV(const string& fileName, const vector<Data>& data) {
     ofstream csv(fileName);
     if (!csv.is_open()) {
         cout << "Error: Could not create CSV file " << fileName << endl;
         return;
     }
     csv << "Time_s,Speed_mph,Acceleration_G,Gear,Engine_RPM,Distance_m" << endl;
-    for (const DataPoint& dp : data) {
+    for (const Data& dp : data) {
         csv << fixed << setprecision(3) << dp.time << "," << dp.speed << "," << dp.accel << "," << dp.gear << "," << dp.engineRPM << "," << dp.distanceMeters << endl;
     }
     cout << "Data exported to " << fileName << endl;
 }
 
 int main() {
-    vector<Vehicle> cars = {
-         readVehicle("chevy.txt"),
-         readVehicle("corolla.txt"),
-         readVehicle("hellcat.txt"),
-         readVehicle("honda_civic.txt"),
-         readVehicle("m3.txt"),
-         readVehicle("mustang.txt"),
-         readVehicle("porsche_911_gt3.txt"),
-         readVehicle("silverado.txt"),
-    };
+    vector<Vehicle> cars = {readVehicle("chevy.txt"), readVehicle("corolla.txt"), readVehicle("hellcat.txt"), readVehicle("honda_civic.txt"), readVehicle("m3.txt"), readVehicle("mustang.txt"), readVehicle("porsche_911_gt3.txt"), readVehicle("silverado.txt")};
     for (const Vehicle& car : cars) {
-        if (car.name.empty()) {
-            cout  << "Skipping invalid vehicle file." << endl;
-            continue;
-        }
         cout << car.name << endl;
-        vector<DataPoint> allCarData = runSim(car);
-        exportCSV("results/" + car.name + "_telemetry.csv", allCarData);
+        vector<Data> allCarData = runSim(car);
+        CSV("results/" + car.name + "_telemetry.csv", allCarData);
         cout << " " << endl;
     }
     return 0;
