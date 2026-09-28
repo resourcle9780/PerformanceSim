@@ -159,7 +159,7 @@ vector<Data> runSim(const Vehicle& car) {
             topSpeed = true;
             break;
         }
-        if (currentGear == numGears && fifthGearTime > 2.0 && std::abs(acceleration) < topSpeedTolerance && !currentlyShifting) {
+        if (currentGear == numGears && std::abs(acceleration) < topSpeedTolerance && !currentlyShifting) {
             cout << "Top speed reached at: " << (carVel * meterToMph) << " mph at " << fixed << setprecision(3) << time << " seconds" << endl;
             topSpeed = true;
             break;
