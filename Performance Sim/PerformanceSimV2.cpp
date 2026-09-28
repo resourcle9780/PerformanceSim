@@ -1,4 +1,3 @@
-// Performance Sim.cpp : This file contains the 'main' function. Program execution begins and ends there.
 #define _USE_MATH_DEFINES
 #include <iostream>
 #include <iomanip>
@@ -7,8 +6,8 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+
 using namespace std;
-//Vehicle Class to define a car object
 struct Vehicle {
     string name;
     double mass;
@@ -19,7 +18,7 @@ struct Vehicle {
     double peakTorque;
     double redlineRPM;
 };
-//Function to read the file and load it into the object car;
+
 Vehicle readVehicle(const string& fileName) {
     ifstream file("input/" + fileName);
     Vehicle car{};
@@ -39,7 +38,8 @@ Vehicle readVehicle(const string& fileName) {
     cout << "Loaded vehicle: " << car.name << endl;
     return car;
 }
-//Calculates engine torque based on the engine rpm
+
+
 double getEngineTorque(double rpm, double peakTorque, double redlineRPM) {
     double rpmPct = rpm / redlineRPM;
     if (rpmPct < 0.15) {
@@ -72,13 +72,13 @@ struct DataPoint {
 };
 vector<DataPoint> runSim(const Vehicle& car) {
     vector<DataPoint> data;
-    //Constants
+    
     constexpr double airDensity = 1.225;
     constexpr double g = 9.81;
     constexpr double Crr = 0.015;
     constexpr double timeStep = 0.01;
-    constexpr double sixtySpeed = 26.82; //0-60 in meters per second
-    constexpr double quarterDistance = 402.3; //quarter mile in meter
+    constexpr double sixtySpeed = 26.82;
+    constexpr double quarterDistance = 402.3;
     const double gearRatios[] = { 3.50, 2.10, 1.40, 1.00, 0.65 };
     const int numGears = 5;
     const double finalDrive = 3.73;
@@ -88,7 +88,9 @@ vector<DataPoint> runSim(const Vehicle& car) {
     constexpr double topSpeedTolerance = 0.05;
     constexpr double drivetrainEfficiency = 0.90;
     constexpr double maxTime = 180.0;
-    //0-60 Time and Top Speed
+
+
+    
     double carVel = 0.0;
     double distance = 0.0;
     double time = 0.0;
@@ -99,7 +101,7 @@ vector<DataPoint> runSim(const Vehicle& car) {
     int currentGear = 1;
     double shiftTimer = 0.0;
     double fifthGearTime = 0.0;
-    //Calculation Loop
+    
     while (time < maxTime) {
         double wheelAngularVel = carVel / car.radius;
         double currentTotalRatio = gearRatios[currentGear - 1] * finalDrive;
@@ -171,7 +173,7 @@ vector<DataPoint> runSim(const Vehicle& car) {
             break;
         }
     }
-    //Fallbacks for time constraint
+    
     if (!quarterRecorded) {
         cout << "Your car didn't complete a quarter mile in " << maxTime << " seconds" << endl;
     }
@@ -192,7 +194,7 @@ void exportCSV(const string& fileName, const vector<DataPoint>& data) {
     }
     cout << "Data exported to " << fileName << endl;
 }
-//Main function
+
 int main() {
     vector<Vehicle> cars = {
          readVehicle("chevy.txt"),
