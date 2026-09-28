@@ -86,8 +86,6 @@ vector<Data> runSim(const Vehicle& car) {
     constexpr double shiftDuration = 0.20;
     constexpr double drivetrainEfficiency = 0.90;
     constexpr double maxTime = 180.0;
-
-
     
     double carVel = 0.0;
     double distance = 0.0;
