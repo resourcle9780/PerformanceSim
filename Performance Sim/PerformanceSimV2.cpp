@@ -21,7 +21,7 @@ struct Vehicle {
 };
 //Function to read the file and load it into the object car;
 Vehicle readVehicle(const string& fileName) {
-    ifstream file(fileName);
+    ifstream file("input/" + fileName);
     Vehicle car{};
     if (!file.is_open()) {
         cout << "Error: Could not open file " << fileName << endl;
