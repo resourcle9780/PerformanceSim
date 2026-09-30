@@ -32,7 +32,7 @@ A C++ vehicle performance simulator. Reads vehicle data from text files, simulat
 | Porsche 911 GT3 (992, manual) | 3.339s | 3.8s (approx.) | -12.1% | 11.437s | 11.4s (approx.) | +0.3% |
 | Camaro SS (2016+) | 3.430s | 4.0s | -14.3% | 11.867s | 12.3s | -3.5% |
 | Silverado (5.3L V8) | 5.870s | 6.5s (approx.) | -9.7% | 14.641s | 15.0s (approx.) | -2.4% |
-| **Average error** | | | **~9.7%** | | | **~3.0%** |
+| **Average error** | | | **9.7%** | | | **3.0%** |
 
 ## Data Sources
 
