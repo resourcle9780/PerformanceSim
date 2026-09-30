@@ -53,4 +53,4 @@ A C++ vehicle performance simulator. Reads vehicle data from text files, simulat
 | Camaro SS (2016+) | Curb weight, torque, published 0-60/quarter mile | lsxmag.com |
 | Silverado (5.3L V8) | Curb weight, torque, published 0-60/quarter mile | approximate|
 
-**Not manufacturer-published for any vehicle:** drag coefficient (Cd), frontal area, and tire friction coefficient (μ) were engineering estimates based on typical values for each vehicle class, not sourced figures.
+drag coefficient (Cd), frontal area, and tire friction coefficient (μ) were estimates based on values for each vehicle class, not actual figures.
