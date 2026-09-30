@@ -20,7 +20,6 @@ A C++ vehicle performance simulator. Reads vehicle data from text files, simulat
 - EV drivetrains are not modeled
 - Fixed drivetrain efficiency for all vehicles
 - No braking or deceleration phase; straight-line acceleration only
-- 
 ## Validation
 
 | Vehicle | Sim 0-60 | Published 0-60 | Error | Sim 1/4 mi | Published 1/4 mi | Error |
