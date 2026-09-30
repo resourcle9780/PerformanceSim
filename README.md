@@ -45,12 +45,12 @@ A C++ vehicle performance simulator. Reads vehicle data from text files, simulat
 | Challenger Hellcat | Curb weight, torque | dupontregistry.com, tflcar.com |
 | Challenger Hellcat | Published 0-60/quarter mile | dupontregistry.com, carscoops.com |
 | Civic Si (2023) | Curb weight, torque, redline | hondanews.com |
-| Civic Si (2023) | Published 0-60/quarter mile | approximate, general consensus — no single instrumented test source |
+| Civic Si (2023) | Published 0-60/quarter mile | approximate|
 | BMW M3 (2023 Sedan, manual) | Curb weight, torque, redline, published 0-60/quarter mile | motormatchup.com |
 | Porsche 911 GT3 (992, manual) | Curb weight, torque, redline | supercars.net |
 | Porsche 911 GT3 (992, manual) | Published 0-60 | fastcar.co.uk |
-| Porsche 911 GT3 (992, manual) | Published quarter mile | approximate — no single instrumented test source |
+| Porsche 911 GT3 (992, manual) | Published quarter mile | approximate |
 | Camaro SS (2016+) | Curb weight, torque, published 0-60/quarter mile | lsxmag.com |
-| Silverado (5.3L V8) | Curb weight, torque, published 0-60/quarter mile | approximate — general market data, not independently verified |
+| Silverado (5.3L V8) | Curb weight, torque, published 0-60/quarter mile | approximate|
 
 **Not manufacturer-published for any vehicle:** drag coefficient (Cd), frontal area, and tire friction coefficient (μ) were engineering estimates based on typical values for each vehicle class, not sourced figures.
