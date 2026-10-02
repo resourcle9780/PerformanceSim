@@ -26,15 +26,15 @@ Vehicle readVehicle(const std::string& fileName) {
         return car;
     }
     if (!std::getline(file, car.name) || !(file >> car.mass >> car.cd >> car.area >> car.radius >> car.tireMu >> car.peakTorque >> car.redlineRPM)) {
-        std::cout << "Error: Invalid vehicle data in " << fileName << std:endl;
+        std::cout << "Error: Invalid vehicle data in " << fileName << std::endl;
         return car;
     }
     if (car.mass <= 0.0 || car.cd < 0.0 || car.area <= 0.0 || car.radius <= 0.0 || car.tireMu <= 0.0 || car.peakTorque <= 0.0 || car.redlineRPM <= 0.0) {
-        std::cout << "Error: Invalid vehicle data in " << fileName << std:endl;
+        std::cout << "Error: Invalid vehicle data in " << fileName << std::endl;
         return car;
     }
     file.close();
-    std::cout << "Loaded vehicle: " << car.name << std:endl;
+    std::cout << "Loaded vehicle: " << car.name << std::endl;
     return car;
 }
 
@@ -86,6 +86,7 @@ std::vector<Data> runSim(const Vehicle& car) {
     constexpr double shiftDuration = 0.20;
     constexpr double drivetrainEfficiency = 0.90;
     constexpr double maxTime = 180.0;
+    constexpr double PI = 3.14159265358979323846;
     
     double carVel = 0.0;
     double distance = 0.0;
@@ -100,15 +101,15 @@ std::vector<Data> runSim(const Vehicle& car) {
     while (time < maxTime) {
         double wheelAngularVel = carVel / car.radius;
         double currentTotalRatio = gearRatios[currentGear - 1] * finalDrive;
-        double engineRPM = wheelAngularVel * currentTotalRatio * (60.0 / (2.0 * M_PI));
+        double engineRPM = wheelAngularVel * currentTotalRatio * (60.0 / (2.0 * PI));
         if (engineRPM < idleRPM) {
             engineRPM = idleRPM;
         }
         if (engineRPM >= car.redlineRPM && currentGear < numGears && shiftTimer <= 0.0) {
-            std::cout << "Gear shifted at " << std::fixed << std::setprecision(2) << time << " seconds" << " from " << currentGear << " to " << currentGear + 1 << " at " << fixed << setprecision(2) << (carVel * meterToMph) << " mph" << std:endl;
+            std::cout << "Gear shifted at " << std::fixed << std::setprecision(2) << time << " seconds" << " from " << currentGear << " to " << currentGear + 1 << " at " << std::fixed << std::setprecision(2) << (carVel * meterToMph) << " mph" << std::endl;
             currentGear++;
             currentTotalRatio = gearRatios[currentGear - 1] * finalDrive;
-            engineRPM = wheelAngularVel * currentTotalRatio * (60.0 / (2.0 * M_PI));
+            engineRPM = wheelAngularVel * currentTotalRatio * (60.0 / (2.0 * PI));
             engineRPM = std::max(engineRPM, idleRPM);
             shiftTimer = shiftDuration;
         }
@@ -142,55 +143,55 @@ std::vector<Data> runSim(const Vehicle& car) {
         if (!sixtyRecorded && oldVelocity < sixtySpeed && carVel >= sixtySpeed) {
             double fraction = (sixtySpeed - oldVelocity) / (carVel - oldVelocity);
             double zeroToSixtyTime = oldTime + fraction * timeStep;
-            std::cout << "0-60 mph in " << std::fixed << std::setprecision(3) << zeroToSixtyTime << " seconds" << std:endl;
+            std::cout << "0-60 mph in " << std::fixed << std::setprecision(3) << zeroToSixtyTime << " seconds" << std::endl;
             sixtyRecorded = true;
         }
         if (!quarterRecorded && oldDistance < quarterDistance && distance >= quarterDistance) {
             double fraction = (quarterDistance - oldDistance) /(distance - oldDistance);
             double quarterMileTime = oldTime + fraction * timeStep;
-            std::cout << "Quarter mile time: " << std::fixed << std::setprecision(3) << quarterMileTime << " seconds" << std:endl;
+            std::cout << "Quarter mile time: " << std::fixed << std::setprecision(3) << quarterMileTime << " seconds" << std::endl;
             quarterRecorded = true;
         }
         if (currentGear == numGears && engineRPM >= car.redlineRPM) {
-            std::cout << "Top speed (gear limited) reached at: " << std::fixed << std::setprecision(3) << (carVel * meterToMph) << " mph at " << time << " seconds" << std:endl;
+            std::cout << "Top speed (gear limited) reached at: " << std::fixed << std::setprecision(3) << (carVel * meterToMph) << " mph at " << time << " seconds" << std::endl;
             topSpeed = true;
             break;
         }
         if (currentGear == numGears && acceleration < 0.05  && !currentlyShifting) {
-            std::cout << "Top speed reached at: " << (carVel * meterToMph) << " mph at " << std::fixed << std::setprecision(3) << time << " seconds" << std:endl;
+            std::cout << "Top speed reached at: " << (carVel * meterToMph) << " mph at " << std::fixed << std::setprecision(3) << time << " seconds" << std::endl;
             topSpeed = true;
             break;
         }
     }
     
     if (!quarterRecorded) {
-        std::cout << "Your car didn't complete a quarter mile in " << maxTime << " seconds" << std:endl;
+        std::cout << "Your car didn't complete a quarter mile in " << maxTime << " seconds" << std::endl;
     }
     if (!topSpeed) {
-        std::cout << "Your car didn't reach it's top speed in " << maxTime << " seconds" << std:endl;
+        std::cout << "Your car didn't reach it's top speed in " << maxTime << " seconds" << std::endl;
     }
     return data;
 }
 void CSV(const std::string& fileName, const std::vector<Data>& data) {
     std::ofstream csv(fileName);
     if (!csv.is_open()) {
-        std::cout << "Error: Could not create CSV file " << fileName << std:endl;
+        std::cout << "Error: Could not create CSV file " << fileName << std::endl;
         return;
     }
-    csv << "Time_s,Speed_mph,Acceleration_G,Gear,Engine_RPM,Distance_m" << std:endl;
+    csv << "Time_s,Speed_mph,Acceleration_G,Gear,Engine_RPM,Distance_m" << std::endl;
     for (const Data& dp : data) {
-        csv << std::fixed << std::setprecision(3) << dp.time << "," << dp.speed << "," << dp.accel << "," << dp.gear << "," << dp.engineRPM << "," << dp.distanceMeters << std:endl;
+        csv << std::fixed << std::setprecision(3) << dp.time << "," << dp.speed << "," << dp.accel << "," << dp.gear << "," << dp.engineRPM << "," << dp.distanceMeters << std::endl;
     }
-    std::cout << "Data exported to " << fileName << std:endl;
+    std::cout << "Data exported to " << fileName << std::endl;
 }
 
 int main() {
     std::vector<Vehicle> cars = {readVehicle("chevy.txt"), readVehicle("corolla.txt"), readVehicle("hellcat.txt"), readVehicle("honda_civic.txt"), readVehicle("m3.txt"), readVehicle("mustang.txt"), readVehicle("porsche_911_gt3.txt"), readVehicle("silverado.txt")};
     for (const Vehicle& car : cars) {
-        std::cout << car.name << std:endl;
+        std::cout << car.name << std::endl;
         std::vector<Data> allCarData = runSim(car);
         CSV("results/" + car.name + "_telemetry.csv", allCarData);
-        std::cout << " " << std:endl;
+        std::cout << " " << std::endl;
     }
     return 0;
 }
