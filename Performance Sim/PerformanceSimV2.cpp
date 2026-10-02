@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <vector>
 
-using namespace std;
+
 struct Vehicle {
-    string name;
+    std::string name;
     double mass;
     double cd;
     double area;
@@ -18,23 +18,23 @@ struct Vehicle {
     double redlineRPM;
 };
 
-Vehicle readVehicle(const string& fileName) {
-    ifstream file("input/" + fileName);
+Vehicle readVehicle(const std::string& fileName) {
+    std::ifstream file("input/" + fileName);
     Vehicle car{};
     if (!file.is_open()) {
-        cout << "Error: Could not open file " << fileName << endl;
+        std::cout << "Error: Could not open file " << fileName << std::endl;
         return car;
     }
-    if (!getline(file, car.name) || !(file >> car.mass >> car.cd >> car.area >> car.radius >> car.tireMu >> car.peakTorque >> car.redlineRPM)) {
-        cout << "Error: Invalid vehicle data in " << fileName << endl;
+    if (!std::getline(file, car.name) || !(file >> car.mass >> car.cd >> car.area >> car.radius >> car.tireMu >> car.peakTorque >> car.redlineRPM)) {
+        std::cout << "Error: Invalid vehicle data in " << fileName << std:endl;
         return car;
     }
     if (car.mass <= 0.0 || car.cd < 0.0 || car.area <= 0.0 || car.radius <= 0.0 || car.tireMu <= 0.0 || car.peakTorque <= 0.0 || car.redlineRPM <= 0.0) {
-        cout << "Error: Invalid vehicle data in " << fileName << endl;
+        std::cout << "Error: Invalid vehicle data in " << fileName << std:endl;
         return car;
     }
     file.close();
-    cout << "Loaded vehicle: " << car.name << endl;
+    std::cout << "Loaded vehicle: " << car.name << std:endl;
     return car;
 }
 
@@ -69,8 +69,8 @@ struct Data {
     double engineRPM;
     double distanceMeters;
 };
-vector<Data> runSim(const Vehicle& car) {
-    vector<Data> data;
+std::vector<Data> runSim(const Vehicle& car) {
+    std::vector<Data> data;
     
     constexpr double airDensity = 1.225;
     constexpr double g = 9.81;
@@ -105,15 +105,15 @@ vector<Data> runSim(const Vehicle& car) {
             engineRPM = idleRPM;
         }
         if (engineRPM >= car.redlineRPM && currentGear < numGears && shiftTimer <= 0.0) {
-            cout << "Gear shifted at " << fixed << setprecision(2) << time << " seconds" << " from " << currentGear << " to " << currentGear + 1 << " at " << fixed << setprecision(2) << (carVel * meterToMph) << " mph" << endl;
+            std::cout << "Gear shifted at " << std::fixed << std::setprecision(2) << time << " seconds" << " from " << currentGear << " to " << currentGear + 1 << " at " << fixed << setprecision(2) << (carVel * meterToMph) << " mph" << std:endl;
             currentGear++;
             currentTotalRatio = gearRatios[currentGear - 1] * finalDrive;
             engineRPM = wheelAngularVel * currentTotalRatio * (60.0 / (2.0 * M_PI));
-            engineRPM = max(engineRPM, idleRPM);
+            engineRPM = std::max(engineRPM, idleRPM);
             shiftTimer = shiftDuration;
         }
 
-        double F_drag = 0.5 * airDensity * car.cd * pow(carVel, 2) * car.area;
+        double F_drag = 0.5 * airDensity * car.cd * std::pow(carVel, 2) * car.area;
         double F_roll = Crr * car.mass * g;
         double F_traction = 0.0;
 
@@ -121,12 +121,12 @@ vector<Data> runSim(const Vehicle& car) {
 
         if (currentlyShifting) {
             F_traction = 0.0;
-            shiftTimer = max(0.0, shiftTimer - timeStep);
+            shiftTimer = std::max(0.0, shiftTimer - timeStep);
         }
         else {
             double maxGrip = car.tireMu * car.mass * g;
             double rawTraction = (getEngineTorque(engineRPM, car.peakTorque, car.redlineRPM) * currentTotalRatio * drivetrainEfficiency) / car.radius;
-            F_traction = min(rawTraction, maxGrip);
+            F_traction = std::min(rawTraction, maxGrip);
         }
 
         double F_net = F_traction - F_drag - F_roll;
@@ -137,60 +137,60 @@ vector<Data> runSim(const Vehicle& car) {
         double oldTime = time;
         distance += carVel * timeStep + 0.5 * acceleration * timeStep * timeStep;
         carVel += acceleration * timeStep;
-        carVel = max(0.0, carVel);
+        carVel = std::max(0.0, carVel);
         time += timeStep;
         if (!sixtyRecorded && oldVelocity < sixtySpeed && carVel >= sixtySpeed) {
             double fraction = (sixtySpeed - oldVelocity) / (carVel - oldVelocity);
             double zeroToSixtyTime = oldTime + fraction * timeStep;
-            cout << "0-60 mph in " << fixed << setprecision(3) << zeroToSixtyTime << " seconds" << endl;
+            std::cout << "0-60 mph in " << std::fixed << std::setprecision(3) << zeroToSixtyTime << " seconds" << std:endl;
             sixtyRecorded = true;
         }
         if (!quarterRecorded && oldDistance < quarterDistance && distance >= quarterDistance) {
             double fraction = (quarterDistance - oldDistance) /(distance - oldDistance);
             double quarterMileTime = oldTime + fraction * timeStep;
-            cout << "Quarter mile time: " << fixed << setprecision(3) << quarterMileTime << " seconds" << endl;
+            std::cout << "Quarter mile time: " << std::fixed << std::setprecision(3) << quarterMileTime << " seconds" << std:endl;
             quarterRecorded = true;
         }
         if (currentGear == numGears && engineRPM >= car.redlineRPM) {
-            cout << "Top speed (gear limited) reached at: " << fixed << setprecision(3) << (carVel * meterToMph) << " mph at " << time << " seconds" << endl;
+            std::cout << "Top speed (gear limited) reached at: " << std::fixed << std::setprecision(3) << (carVel * meterToMph) << " mph at " << time << " seconds" << std:endl;
             topSpeed = true;
             break;
         }
         if (currentGear == numGears && acceleration < 0.05  && !currentlyShifting) {
-            cout << "Top speed reached at: " << (carVel * meterToMph) << " mph at " << fixed << setprecision(3) << time << " seconds" << endl;
+            std::cout << "Top speed reached at: " << (carVel * meterToMph) << " mph at " << std::fixed << std::setprecision(3) << time << " seconds" << std:endl;
             topSpeed = true;
             break;
         }
     }
     
     if (!quarterRecorded) {
-        cout << "Your car didn't complete a quarter mile in " << maxTime << " seconds" << endl;
+        std::cout << "Your car didn't complete a quarter mile in " << maxTime << " seconds" << std:endl;
     }
     if (!topSpeed) {
-        cout << "Your car didn't reach it's top speed in " << maxTime << " seconds" << endl;
+        std::cout << "Your car didn't reach it's top speed in " << maxTime << " seconds" << std:endl;
     }
     return data;
 }
-void CSV(const string& fileName, const vector<Data>& data) {
-    ofstream csv(fileName);
+void CSV(const std::string& fileName, const std::vector<Data>& data) {
+    std::ofstream csv(fileName);
     if (!csv.is_open()) {
-        cout << "Error: Could not create CSV file " << fileName << endl;
+        std::cout << "Error: Could not create CSV file " << fileName << std:endl;
         return;
     }
-    csv << "Time_s,Speed_mph,Acceleration_G,Gear,Engine_RPM,Distance_m" << endl;
+    csv << "Time_s,Speed_mph,Acceleration_G,Gear,Engine_RPM,Distance_m" << std:endl;
     for (const Data& dp : data) {
-        csv << fixed << setprecision(3) << dp.time << "," << dp.speed << "," << dp.accel << "," << dp.gear << "," << dp.engineRPM << "," << dp.distanceMeters << endl;
+        csv << std::fixed << std::setprecision(3) << dp.time << "," << dp.speed << "," << dp.accel << "," << dp.gear << "," << dp.engineRPM << "," << dp.distanceMeters << std:endl;
     }
-    cout << "Data exported to " << fileName << endl;
+    std::cout << "Data exported to " << fileName << std:endl;
 }
 
 int main() {
-    vector<Vehicle> cars = {readVehicle("chevy.txt"), readVehicle("corolla.txt"), readVehicle("hellcat.txt"), readVehicle("honda_civic.txt"), readVehicle("m3.txt"), readVehicle("mustang.txt"), readVehicle("porsche_911_gt3.txt"), readVehicle("silverado.txt")};
+    std::vector<Vehicle> cars = {readVehicle("chevy.txt"), readVehicle("corolla.txt"), readVehicle("hellcat.txt"), readVehicle("honda_civic.txt"), readVehicle("m3.txt"), readVehicle("mustang.txt"), readVehicle("porsche_911_gt3.txt"), readVehicle("silverado.txt")};
     for (const Vehicle& car : cars) {
-        cout << car.name << endl;
-        vector<Data> allCarData = runSim(car);
+        std::cout << car.name << std:endl;
+        std::vector<Data> allCarData = runSim(car);
         CSV("results/" + car.name + "_telemetry.csv", allCarData);
-        cout << " " << endl;
+        std::cout << " " << std:endl;
     }
     return 0;
 }
